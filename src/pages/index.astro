@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPosts } from '../posts';
+import { url, slugifyTag } from '../utils';
+
+const posts = await getPosts();
+const [latest, ...rest] = posts;
+const recent = rest.slice(0, 6);
+const tagCounts = new Map<string, number>();
+posts.forEach((p) => p.data.tags.forEach((t) => tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)));
+const topTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+---
+<Base>
+  <section class="band hero">
+    <div class="wrap">
+      <p class="eyebrow">Blog · Attaque &amp; détection</p>
+      <h1>Notes de terrain d'un <em>attaquant</em>, côté autorisé.</h1>
+      <p class="lead">Pentest, bug bounty, Active Directory, outillage et write-ups. Ce qui a marché, ce qui n'a pas marché, et pourquoi.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href={url('/blog/')}>Lire les articles</a>
+        <a class="btn btn-ghost" href={url('/rss.xml')}>S'abonner (RSS)</a>
+      </div>
+      <div class="hero-proof mono">
+        <div><b>{posts.length}</b> article{posts.length > 1 ? 's' : ''}</div>
+        <div><b>{tagCounts.size}</b> thèmes</div>
+        <div><b>MD</b> écrit en Markdown</div>
+        <div><b>FR</b> 100 % français</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap content">
+    {latest ? (
+      <>
+        <section>
+          <p class="eyebrow">Dernier article</p>
+          <PostCard post={latest} featured />
+        </section>
+        {recent.length > 0 && (
+          <section>
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Récemment</p>
+                <h2>À lire aussi</h2>
+              </div>
+              <a class="more mono" href={url('/blog/')}>Tous les articles →</a>
+            </div>
+            <div class="grid">{recent.map((p) => <PostCard post={p} />)}</div>
+          </section>
+        )}
+        {topTags.length > 0 && (
+          <section>
+            <p class="eyebrow">Thèmes</p>
+            <ul class="tags big">
+              {topTags.map(([t, n]) => <li><a class="tag" href={url(`/tags/${slugifyTag(t)}/`)}>#{t} <span>{n}</span></a></li>)}
+            </ul>
+          </section>
+        )}
+      </>
+    ) : (
+      <p class="empty">Aucun article pour l'instant.</p>
+    )}
+  </div>
+</Base>
+
+<style>
+  .hero { padding: 88px 0 72px; }
+  .hero h1 { font-size: clamp(34px, 5vw, 60px); font-weight: 800; max-width: 900px; letter-spacing: -.02em; }
+  .hero h1 em { font-style: normal; color: var(--accent-soft); }
+  .lead { color: var(--on-dark); margin-top: 20px; font-size: 18px; max-width: 680px; }
+  .hero-cta { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .hero-proof { display: flex; gap: 32px; margin-top: 44px; flex-wrap: wrap; font-size: 12px; color: var(--on-dark-muted); }
+  .hero-proof b { color: #fff; font-size: 18px; display: block; }
+
+  .content section { margin-top: 64px; }
+  .section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 800; }
+  .more { font-size: 13px; color: var(--accent); font-weight: 700; }
+  .more:hover { text-decoration: underline; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 20px; }
+  .big .tag { font-size: 13px; padding: 6px 12px; }
+  .big .tag span { color: var(--subtle); margin-left: 4px; }
+  .empty { margin-top: 64px; color: var(--muted); }
+</style>

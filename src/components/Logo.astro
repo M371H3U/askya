@@ -1,0 +1,11 @@
+---
+// Logo askya : « A » en deux pièces (chevron + jambes en M inversé) coupé d'une barre d'accent.
+// Vectorisé depuis le visuel fourni ; la barre prend la couleur d'accent (ambre).
+interface Props { size?: number; class?: string; bar?: string }
+const { size = 30, class: cls, bar = 'var(--accent)' } = Astro.props;
+---
+<svg class={cls} width={Math.round(size * 0.949)} height={size} viewBox="160 195 648 683" aria-hidden="true">
+  <polygon fill="currentColor" points="365,455 484,205 602,455 549,455 484,318 419,455" />
+  <rect fill={bar} x="210" y="484" width="547" height="51" />
+  <polygon fill="currentColor" points="169,868 313,565 366,565 246,817 484,594 721,817 601,565 654,565 799,868 702,868 484,664 266,868" />
+</svg>

@@ -1,0 +1,18 @@
+---
+import Base from './Base.astro';
+const { frontmatter } = Astro.props;
+---
+<Base title={frontmatter.title} description={frontmatter.description}>
+  <section class="band page-head">
+    <div class="wrap-narrow">
+      <p class="eyebrow">askya</p>
+      <h1>{frontmatter.title}</h1>
+    </div>
+  </section>
+  <div class="wrap-narrow prose body"><slot /></div>
+</Base>
+<style>
+  .page-head { padding: 64px 0 52px; }
+  .page-head h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; }
+  .body { margin-top: 48px; }
+</style>

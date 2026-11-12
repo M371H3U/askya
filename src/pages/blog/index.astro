@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts } from '../../posts';
+
+const posts = await getPosts();
+const byYear = new Map<number, typeof posts>();
+posts.forEach((p) => {
+  const y = p.data.date.getFullYear();
+  byYear.set(y, [...(byYear.get(y) ?? []), p]);
+});
+---
+<Base title="Articles" description="Tous les articles du blog askya : pentest, bug bounty, Active Directory, write-ups.">
+  <section class="band page-head">
+    <div class="wrap">
+      <p class="eyebrow">Archives</p>
+      <h1>Tous les articles</h1>
+      <p class="sub mono">{posts.length} publication{posts.length > 1 ? 's' : ''}</p>
+    </div>
+  </section>
+  <div class="wrap">
+    {[...byYear.entries()].map(([year, list]) => (
+      <section class="year">
+        <h2 class="mono">{year}</h2>
+        <div class="grid">{list.map((p) => <PostCard post={p} />)}</div>
+      </section>
+    ))}
+  </div>
+</Base>
+
+<style>
+  .page-head { padding: 64px 0 52px; }
+  .page-head h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; }
+  .sub { color: var(--on-dark-muted); font-size: 13px; margin-top: 12px; }
+  .year { margin-top: 56px; }
+  .year h2 { font-size: 15px; color: var(--accent); letter-spacing: .1em; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; }
+  .year h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 20px; }
+</style>

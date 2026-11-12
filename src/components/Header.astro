@@ -1,0 +1,61 @@
+---
+import Logo from './Logo.astro';
+import { url } from '../utils';
+import { LINKS } from '../consts';
+
+const path = Astro.url.pathname;
+const nav = [
+  { href: url('/'), label: 'Accueil', match: (p: string) => p === url('/') },
+  { href: url('/blog/'), label: 'Articles', match: (p: string) => p.startsWith(url('/blog/')) },
+  { href: url('/tags/'), label: 'Thèmes', match: (p: string) => p.startsWith(url('/tags/')) },
+  { href: url('/a-propos/'), label: 'À propos', match: (p: string) => p.startsWith(url('/a-propos/')) },
+];
+---
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href={url('/')} aria-label="askya — accueil">
+      <Logo size={30} />
+      <span>askya</span><span class="brand-cursor" aria-hidden="true">_</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <ul class="nav-links">
+        {nav.map((n) => (
+          <li><a href={n.href} aria-current={n.match(path) ? 'page' : undefined}>{n.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="icon-btn" href={url('/rss.xml')} aria-label="Flux RSS" title="RSS">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+      </a>
+      <a class="icon-btn" href={LINKS.github} aria-label="GitHub" title="GitHub" rel="me noopener" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></svg>
+      </a>
+      <a class="icon-btn" href={LINKS.linkedin} aria-label="LinkedIn" title="LinkedIn" rel="me noopener" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--dark) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,.08); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 24px; }
+  .brand { display: flex; align-items: center; gap: 11px; color: #fff; font-weight: 800; font-size: 22px; letter-spacing: -.03em; flex-shrink: 0; }
+  .brand-cursor { color: var(--accent); margin-left: -9px; animation: blink 1.1s steps(1) infinite; font-family: var(--mono); font-weight: 700; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .brand-cursor { animation: none; } }
+  .nav-links { display: flex; gap: 26px; font-size: 14px; color: var(--on-dark); list-style: none; margin: 0; padding: 0; white-space: nowrap; }
+  .nav-links a { position: relative; padding: 6px 0; transition: color .15s; }
+  .nav-links a:hover, .nav-links a[aria-current] { color: #fff; }
+  .nav-links a[aria-current]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; background: var(--accent); }
+  .nav-cta { display: flex; gap: 6px; align-items: center; }
+  .icon-btn { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 6px; border: 1px solid rgba(255,255,255,.14); background: transparent; color: var(--on-dark); cursor: pointer; transition: color .15s, border-color .15s; }
+  .icon-btn:hover { color: #fff; border-color: rgba(255,255,255,.5); }
+
+  @media (max-width: 760px) {
+    .nav .wrap { height: auto; flex-wrap: wrap; padding-top: 12px; padding-bottom: 10px; row-gap: 8px; }
+    nav { order: 3; width: 100%; overflow-x: auto; }
+    .nav-links { gap: 20px; }
+  }
+</style>

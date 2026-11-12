@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts, type Post } from '../../posts';
+import { url, slugifyTag } from '../../utils';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const map = new Map<string, { label: string; posts: Post[] }>();
+  posts.forEach((p) =>
+    p.data.tags.forEach((t) => {
+      const k = slugifyTag(t);
+      const e = map.get(k) ?? { label: t, posts: [] };
+      e.posts.push(p);
+      map.set(k, e);
+    }),
+  );
+  return [...map.entries()].map(([tag, v]) => ({ params: { tag }, props: v }));
+}
+const { label, posts } = Astro.props;
+---
+<Base title={`#${label}`} description={`Articles sur le thème ${label}.`}>
+  <section class="band page-head">
+    <div class="wrap">
+      <a class="back mono" href={url('/tags/')}>← Thèmes</a>
+      <p class="eyebrow">Thème</p>
+      <h1>#{label}</h1>
+      <p class="sub mono">{posts.length} article{posts.length > 1 ? 's' : ''}</p>
+    </div>
+  </section>
+  <div class="wrap grid">{posts.map((p) => <PostCard post={p} />)}</div>
+</Base>
+<style>
+  .page-head { padding: 52px 0 52px; }
+  .page-head h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; }
+  .back { display: inline-block; font-size: 12.5px; color: var(--on-dark-muted); margin-bottom: 24px; }
+  .back:hover { color: #fff; }
+  .sub { color: var(--on-dark-muted); font-size: 13px; margin-top: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 20px; margin-top: 48px; }
+</style>

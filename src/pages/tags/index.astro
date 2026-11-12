@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../posts';
+import { url, slugifyTag } from '../../utils';
+
+const posts = await getPosts();
+const counts = new Map<string, number>();
+posts.forEach((p) => p.data.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
+const tags = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0], 'fr'));
+---
+<Base title="Thèmes" description="Les thèmes abordés sur le blog askya.">
+  <section class="band page-head">
+    <div class="wrap">
+      <p class="eyebrow">Index</p>
+      <h1>Thèmes</h1>
+    </div>
+  </section>
+  <div class="wrap">
+    <ul class="list">
+      {tags.map(([t, n]) => (
+        <li><a href={url(`/tags/${slugifyTag(t)}/`)}><span class="mono">#{t}</span><b>{n}</b></a></li>
+      ))}
+    </ul>
+  </div>
+</Base>
+<style>
+  .page-head { padding: 64px 0 52px; }
+  .page-head h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; }
+  .list { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+  .list a { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); transition: border-color .15s; }
+  .list a:hover { border-color: var(--accent); }
+  .list b { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+</style>

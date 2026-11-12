@@ -1,0 +1,124 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getPosts, postSlug, type Post } from '../../posts';
+import { url, formatDate, slugifyTag, readingTime } from '../../utils';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: postSlug(post) },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+interface Props { post: Post; newer?: Post; older?: Post }
+const { post, newer, older } = Astro.props;
+const { title, description, date, updated, tags, category, cover, coverAlt, coverCredit, draft } = post.data;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const og = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg' })).src : undefined;
+---
+<Base title={title} description={description} image={og} type="article">
+  <article>
+    <header class="band post-head">
+      <div class="wrap-narrow">
+        <a class="back mono" href={url('/blog/')}>← Articles</a>
+        <p class="eyebrow">{category}{draft && ' · brouillon'}</p>
+        <h1>{title}</h1>
+        <p class="desc">{description}</p>
+        <p class="meta mono">
+          <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          {updated && <span>· mis à jour le {formatDate(updated)}</span>}
+          <span>· {readingTime(post.body)} min de lecture</span>
+        </p>
+        {tags.length > 0 && (
+          <ul class="tags">{tags.map((t) => <li><a class="tag" href={url(`/tags/${slugifyTag(t)}/`)}>#{t}</a></li>)}</ul>
+        )}
+      </div>
+    </header>
+
+    {cover && (
+      <div class="wrap cover-wrap">
+        <figure>
+          <Image class="cover" src={cover} alt={coverAlt ?? ''} widths={[640, 1024, 1400]} sizes="(max-width: 1100px) 100vw, 1100px" loading="eager" />
+          {coverCredit && <figcaption class="credit mono" set:html={`Photo : ${coverCredit}`} />}
+        </figure>
+      </div>
+    )}
+
+    <div class="layout wrap">
+      <div class="prose"><Content /></div>
+      {toc.length > 2 && (
+        <aside class="toc">
+          <p class="eyebrow">Sommaire</p>
+          <ol>
+            {toc.map((h) => <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ol>
+        </aside>
+      )}
+    </div>
+
+    <nav class="wrap-narrow pager" aria-label="Articles voisins">
+      {older ? <a href={url(`/blog/${postSlug(older)}/`)}><span class="mono">← Précédent</span>{older.data.title}</a> : <span />}
+      {newer ? <a class="next" href={url(`/blog/${postSlug(newer)}/`)}><span class="mono">Suivant →</span>{newer.data.title}</a> : <span />}
+    </nav>
+  </article>
+</Base>
+
+<script>
+  // Bouton « copier » sur les blocs de code
+  document.querySelectorAll('.prose pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy';
+    btn.textContent = 'copier';
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(pre.querySelector('code')?.innerText ?? '');
+        btn.textContent = 'copié ✓';
+      } catch { btn.textContent = 'erreur'; }
+      setTimeout(() => (btn.textContent = 'copier'), 1600);
+    });
+    const box = document.createElement('div');
+    box.className = 'code-box';
+    pre.replaceWith(box);
+    box.append(pre, btn);
+  });
+</script>
+
+<style>
+  .post-head { padding: 52px 0 56px; }
+  .back { display: inline-block; font-size: 12.5px; color: var(--on-dark-muted); margin-bottom: 28px; }
+  .back:hover { color: #fff; }
+  h1 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 800; letter-spacing: -.02em; }
+  .desc { color: var(--on-dark); font-size: 18px; margin-top: 16px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12.5px; color: var(--on-dark-muted); margin: 22px 0 16px; }
+  .cover-wrap { max-width: 1100px; margin-top: -24px; position: relative; z-index: 2; }
+  .cover-wrap figure { margin: 0; }
+  .credit { font-size: 11.5px; color: var(--muted); text-align: right; margin-top: 8px; }
+  .credit :global(a) { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .credit :global(a:hover) { color: var(--accent); }
+  .cover { width: 100%; max-height: 620px; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 20px 50px -25px rgba(0,0,0,.7); }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 760px) 240px; justify-content: center; gap: 64px; margin-top: 52px; }
+  .toc { position: sticky; top: 92px; align-self: start; font-size: 13.5px; border-left: 1px solid var(--line); padding-left: 18px; }
+  .toc ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .toc a { color: var(--muted); }
+  .toc a:hover { color: var(--accent); }
+  .toc .d3 { padding-left: 12px; font-size: 12.5px; }
+  @media (max-width: 1100px) { .layout { grid-template-columns: minmax(0, 760px); } .toc { display: none; } }
+
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 72px; }
+  .pager a { display: flex; flex-direction: column; gap: 6px; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font-weight: 600; font-size: 15px; transition: border-color .15s; }
+  .pager a:hover { border-color: var(--accent); }
+  .pager .mono { font-size: 11.5px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+  .pager .next { text-align: right; }
+  @media (max-width: 600px) { .pager { grid-template-columns: 1fr; } }
+
+  .prose :global(.code-box) { position: relative; }
+  .prose :global(.copy) { position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--d-line); background: var(--dark-2); color: var(--on-dark); cursor: pointer; opacity: 0; transition: opacity .15s; }
+  .prose :global(.code-box:hover .copy), .prose :global(.copy:focus) { opacity: 1; }
+  @media (hover: none) { .prose :global(.copy) { opacity: 1; } }
+</style>

@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../utils';
+---
+<Base title="Page introuvable">
+  <section class="band nf">
+    <div class="wrap">
+      <p class="eyebrow">HTTP 404</p>
+      <h1 class="mono">Not Found_</h1>
+      <p class="lead">Cette page n'existe pas, ou elle a été déplacée.</p>
+      <a class="btn btn-primary" href={url('/')}>Retour à l'accueil</a>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { padding: 120px 0; }
+  h1 { font-size: clamp(40px, 7vw, 80px); font-weight: 700; }
+  .lead { color: var(--on-dark); margin: 16px 0 32px; font-size: 18px; }
+</style>
