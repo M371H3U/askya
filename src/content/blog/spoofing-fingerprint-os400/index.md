@@ -3,6 +3,7 @@ title: "Se faire passer pour un IBM i : usurper l'empreinte OS/400"
 description: "Comment nmap reconnaît un AS/400, comment j'ai amené un leurre à passer pour un vrai IBM i 7.5, et ce que ça apprend aux défenseurs sur la valeur d'une empreinte de service."
 date: 2026-11-12
 category: IBM i
+team: pont
 tags: [ibm-i, as400, honeypot, nmap, fingerprint]
 cover: ./nmap-vrai-vs-leurre.png
 coverAlt: "Deux sorties nmap -sV côte à côte, un vrai IBM i 7.5 et le leurre anonymisé : FTP, telnet, server mapper et telnet TLS identifiés IBM OS/400 des deux côtés"

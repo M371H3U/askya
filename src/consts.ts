@@ -9,3 +9,11 @@ export const LINKS = {
   dekortix: 'https://dekortix.fr',
 };
 
+
+/** Code couleur des articles : rouge = offensif, bleu = défensif, violet = le pont entre les deux. */
+export const TEAMS = {
+  offensif: { label: 'Offensif', hint: 'Red team : exploitation, pentest, bug bounty' },
+  defensif: { label: 'Défense', hint: 'Blue team : détection, forensic, durcissement' },
+  pont: { label: 'Pont', hint: 'Purple team : l’attaque au service de la détection' },
+} as const;
+export type Team = keyof typeof TEAMS;

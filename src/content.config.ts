@@ -13,6 +13,8 @@ const blog = defineCollection({
       updated: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
       category: z.string().default('Article'),
+      // Couleur d'équipe : offensif (rouge), defensif (bleu), pont (violet). Absent = neutre (ambre).
+      team: z.enum(['offensif', 'defensif', 'pont']).optional(),
       cover: image().optional(),
       coverAlt: z.string().optional(),
       // Crédit / licence affiché sous la couverture (HTML court autorisé : liens)

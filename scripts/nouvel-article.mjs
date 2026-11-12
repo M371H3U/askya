@@ -17,6 +17,7 @@ title: ${JSON.stringify(title)}
 description: "Résumé en une phrase (affiché sur la carte et dans Google)."
 date: ${today}
 category: Write-up
+team: offensif   # offensif (rouge) | defensif (bleu) | pont (violet)
 tags: []
 # cover: ./couverture.png
 # coverAlt: "Description de l'image"

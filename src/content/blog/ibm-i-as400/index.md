@@ -3,6 +3,7 @@ title: "IBM i (AS/400) : le serveur que tout le monde oublie en pentest"
 description: "Toujours au cœur des banques, assurances et logisticiens, l'IBM i reste un angle mort des tests d'intrusion. Petit tour de la bête avant d'aller plus loin."
 date: 2026-11-12
 category: IBM i
+team: offensif
 tags: [ibm-i, as400, pentest, legacy]
 cover: ./ibm-system-i5-515.jpg
 coverAlt: "Un serveur IBM System i5 515 (tour noire) à côté d'un terminal IBM à écran vert et de son clavier, affichant l'écran de connexion 5250"

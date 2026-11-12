@@ -4,6 +4,7 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { getPosts, postSlug, type Post } from '../../posts';
 import { url, formatDate, slugifyTag, readingTime } from '../../utils';
+import { TEAMS } from '../../consts';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -15,17 +16,17 @@ export async function getStaticPaths() {
 
 interface Props { post: Post; newer?: Post; older?: Post }
 const { post, newer, older } = Astro.props;
-const { title, description, date, updated, tags, category, cover, coverAlt, coverCredit, draft } = post.data;
+const { title, description, date, updated, tags, category, team, cover, coverAlt, coverCredit, draft } = post.data;
 const { Content, headings } = await render(post);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const og = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg' })).src : undefined;
 ---
 <Base title={title} description={description} image={og} type="article">
-  <article>
+  <article data-team={team}>
     <header class="band post-head">
       <div class="wrap-narrow">
         <a class="back mono" href={url('/blog/')}>← Articles</a>
-        <p class="eyebrow">{category}{draft && ' · brouillon'}</p>
+        <p class="eyebrow">{team && <span class="team-chip" title={TEAMS[team].hint}>{TEAMS[team].label}</span>}{category}{draft && ' · brouillon'}</p>
         <h1>{title}</h1>
         <p class="desc">{description}</p>
         <p class="meta mono">
@@ -90,6 +91,8 @@ const og = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg' })).
 
 <style>
   .post-head { padding: 52px 0 56px; }
+  [data-team] .post-head { border-top: 2px solid var(--team); }
+  .eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
   .back { display: inline-block; font-size: 12.5px; color: var(--on-dark-muted); margin-bottom: 28px; }
   .back:hover { color: #fff; }
   h1 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 800; letter-spacing: -.02em; }

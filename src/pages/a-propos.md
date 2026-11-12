@@ -8,6 +8,8 @@ Je suis **Mathieu B.**, et **askya**, c'est mon carnet de terrain en sécurité 
 
 J'y publie ce que j'apprends en pentest, en bug bounty et en Active Directory, mais aussi côté défense : honeypots, journalisation, ce qui trahit un attaquant. Je crois que l'on détecte mieux ce que l'on sait attaquer. Vous trouverez ici des write-ups, des méthodes, de l'outillage et des retours d'expérience. Je montre aussi ce qui n'a pas marché, parce que c'est souvent là qu'on apprend le plus.
 
+Au quotidien, je suis analyste cybersécurité (SOC), certifié **OSCP+** et **BTL1**. askya, c'est là que je partage le reste : ce que je teste, casse et apprends en dehors du cadre client.
+
 ## Ce que vous trouverez ici
 
 - **Write-ups** : des machines, des labs et des CTF, une fois les règles de publication respectées.
@@ -15,6 +17,14 @@ J'y publie ce que j'apprends en pentest, en bug bounty et en Active Directory, m
 - **Outillage** : mon environnement Linux, mes scripts et mes configurations.
 - **Bug bounty** : des leçons tirées des programmes, publiées sans données sensibles.
 - **Détection** : honeypots, leurres et signaux qui distinguent un vrai attaquant du bruit de fond.
+
+## Le code couleur
+
+Chaque article porte une couleur, reprise des équipes de la sécurité :
+
+- <span class="team-chip" data-team="offensif">Offensif</span> **Rouge** : l'attaque pure, avec de l'exploitation, du pentest et du bug bounty.
+- <span class="team-chip" data-team="defensif">Défense</span> **Bleu** : la défense pure, avec de la détection, du forensic et du durcissement.
+- <span class="team-chip" data-team="pont">Pont</span> **Violet** : les deux à la fois. Ce sont les honeypots et la détection construite à partir de l'attaque. C'est le cœur de ce blog.
 
 ## Cadre
 
